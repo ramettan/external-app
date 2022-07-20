@@ -1,0 +1,14 @@
+.git
+.gitignore
+node_modules
+test
+tmp
+log
+*.log
+yaml
+*.yaml
+Dockerfile
+.dockerignore
+*.md
+*.txt
+Jenkinsfile

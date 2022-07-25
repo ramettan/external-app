@@ -1,24 +1,15 @@
 pipeline {
     agent any 
-    environment {
-        registryCredential = 'dockerhub'
-        imageName = 'beachcoder/external'
-        dockerImage = ''
-        }
+    tools {nodejs "nodejs"}
+
+   
     stages {
         stage('Run the tests') {
-             agent {
-                docker { 
-                    image 'node:18-alpine'
-                    args '-e HOME=/tmp -e NPM_CONFIG_PREFIX=/tmp/.npm'
-                    reuseNode true
-                }
-            }
+            
             steps {
                 echo 'Retrieve source from github' 
-                git branch: 'master',
-                    url: 'https://github.com/beachedcoder/2022_6_27_devops_external.git'
-
+                git branch: 'main',
+                    url: 'https://github.com/ramettan/internal-app.git'
                 echo 'showing files from repo?' 
                 sh 'ls -a'
                 echo 'install dependencies' 
@@ -26,8 +17,13 @@ pipeline {
                 echo 'Run tests'
                 sh 'npm test'
                 echo 'Testing completed'
+                sh 'ls -a'
+                
             }
         }
+        
+       
+        
         stage('Building image') {
             steps{
                 script {
@@ -37,17 +33,19 @@ pipeline {
                 }
             }
             }
-        stage('Push Image') {
-            steps{
-                script {
-                    echo 'pushing the image to docker hub' 
-                    docker.withRegistry('',registryCredential){
-                        dockerImage.push("${env.BUILD_ID}")
-                    }
-                }
+stage ('Docker push'){
+        steps{
+            withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', passwordVariable: 'docker_password', usernameVariable: 'docker_user')]){
+            sh"""
+            docker build -t ${docker_user}/external:${BUILD_NUMBER} .
+            docker login -u ${docker_user} -p ${docker_password}
+            docker push ${docker_user}/external:${BUILD_NUMBER} >&1 | tee docker.txt
+            
+            """
             }
-        }     
-         stage('deploy to k8s') {
+        }
+    }    
+     /*    stage('deploy to k8s') {
              agent {
                 docker { 
                     image 'google/cloud-sdk:latest'
@@ -58,16 +56,16 @@ pipeline {
             steps {
                 echo 'Get cluster credentials'
                 sh 'gcloud container clusters get-credentials demo-cluster --zone us-central1-c --project roidtc-june22-u100'
-                sh "kubectl set image deployment/external-deployment events-external=${env.imageName}:${env.BUILD_ID} --namespace=events"
+                sh "kubectl set image deployment/internal-deployment events-internal=${env.imageName}:${env.BUILD_ID} --namespace=events"
 
              }
         }     
         stage('Remove local docker image') {
             steps{
                 echo "pending"
-
-                sh "docker rmi ${env.imageName}:${env.BUILD_ID}"
+                // sh "docker rmi $imageName:latest"
+                sh "docker rmi -f ${env.imageName}:${env.BUILD_ID}"
             }
-        }
+        }*/
     }
 }

@@ -9,7 +9,7 @@ pipeline {
             steps {
                 echo 'Retrieve source from github' 
                 git branch: 'main',
-                    url: 'https://github.com/ramettan/internal-app.git'
+                    url: 'https://github.com/ramettan/external-app.git'
                 echo 'showing files from repo?' 
                 sh 'ls -a'
                 echo 'install dependencies' 

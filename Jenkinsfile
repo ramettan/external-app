@@ -45,7 +45,7 @@ stage ('Docker push'){
             }
         }
     }    
-     /*    stage('deploy to k8s') {
+     stage('deploy to k8s') {
              agent {
                 docker { 
                     image 'google/cloud-sdk:latest'
@@ -55,8 +55,30 @@ stage ('Docker push'){
                     }
             steps {
                 echo 'Get cluster credentials'
-                sh 'gcloud container clusters get-credentials demo-cluster --zone us-central1-c --project roidtc-june22-u100'
-                sh "kubectl set image deployment/internal-deployment events-internal=${env.imageName}:${env.BUILD_ID} --namespace=events"
+                sh '''
+                gcloud container clusters get-credentials my-app-cluster --zone us-central1-c --project big-quanta-356212
+                pwd
+                ls
+                echo "create a temporary folder for storing manifest"
+                tmp_dir="tmp-vars-${BUILD_NUMBER}"
+                echo $tmp_dir
+				mkdir -p ${tmp_dir}
+                
+                cp  ./yaml/* ./${tmp_dir}
+                cd ${tmp_dir}
+                pwd
+                ls -l
+                echo "replacing image tag"
+                sed -i 's|${BUILD_NUMBER}|'"${BUILD_NUMBER}"'|g' external-deployment.yaml
+                cat external-deployment.yaml
+                cat external-load-balancer.yaml
+                
+                kubectl apply -f external-deployment.yaml
+                kubectl apply -f external-load-balancer.yaml
+               
+                
+                '''
+                
 
              }
         }     

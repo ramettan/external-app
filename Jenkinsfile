@@ -62,7 +62,7 @@ stage ('Docker push'){
                 echo "create a temporary folder for storing manifest"
                 tmp_dir="tmp-vars-${BUILD_NUMBER}"
                 echo $tmp_dir
-				mkdir -p ${tmp_dir}
+		mkdir -p ${tmp_dir}
                 
                 cp  ./yaml/* ./${tmp_dir}
                 cd ${tmp_dir}
@@ -82,7 +82,7 @@ stage ('Docker push'){
 
              }
         }     
-        stage('Remove local docker image') {
+     /*   stage('Remove local docker image') {
             steps{
                 echo "pending"
                 // sh "docker rmi $imageName:latest"

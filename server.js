@@ -122,7 +122,7 @@ app.use((err, req, res, next) => {
 });
 
 // specify the port and start listening
-const PORT = process.env.PORT ? process.env.PORT : 8080;
+const PORT = process.env.PORT ? process.env.PORT : 8081;
 const server = app.listen(PORT, () => {
     const host = server.address().address;
     const port = server.address().port;

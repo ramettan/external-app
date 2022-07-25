@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: external-container
-        image: beachcoder/external:4
+        image: sreeram12345/external:${BUILD_NUMBER}
         env:
           - name: SERVER
             value: 'http://internal-service:7777'

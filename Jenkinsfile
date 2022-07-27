@@ -93,10 +93,21 @@ stage ('Docker push'){
                 sed -i 's|${BUILD_NUMBER}|'"${BUILD_NUMBER}"'|g' external-deployment.yaml
                 cat external-deployment.yaml
                 cat external-load-balancer.yaml
-                
-                kubectl apply -f external-deployment.yaml
+                if [ "${OVERWRITE_SERVICE}" = "true" ]; then
+                deployments=`kubectl get deployments -n ${NAMESPACE}| grep -i ${APP_NAME}| awk '{print $1}'`
+
+                echo "List of all deployments for '${APP_NAME}' --> $deployments"
+		
+		
+		
+		OUT=$(kubectl get deployment | grep external | awk '{print $1}')
+      		echo $OUT
+
+             
+               fi
+   /*             kubectl apply -f external-deployment.yaml
                 kubectl apply -f external-load-balancer.yaml
-               
+     */          
                 
                 '''
                 

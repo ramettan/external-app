@@ -105,9 +105,8 @@ stage ('Docker push'){
 
              
                fi
-   /*             kubectl apply -f external-deployment.yaml
-                kubectl apply -f external-load-balancer.yaml
-     */          
+              
+             
                 
                 '''
                 
@@ -120,6 +119,8 @@ stage ('Docker push'){
                 // sh "docker rmi $imageName:latest"
                 sh "docker rmi -f ${env.imageName}:${env.BUILD_ID}"
             }
+	      kubectl apply -f external-deployment.yaml
+                kubectl apply -f external-load-balancer.yaml
         }*/
     }
 }

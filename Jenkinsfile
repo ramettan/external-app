@@ -94,13 +94,17 @@ stage ('Docker push'){
                 cat external-deployment.yaml
                 cat external-load-balancer.yaml
                
-		
+		kubectl apply -f external-load-balancer.yaml
 		
 		
 		OUT=$(kubectl get deployment | grep external | awk '{print $1}')
       		echo $OUT
-
-             
+		
+		if [ $OUT = "external-deployment" ]; then
+               kubectl replace -f external-deployment.yaml
+	       else
+	       kubectl apply -f external-deployment.yaml
+	       
                fi
               
              
